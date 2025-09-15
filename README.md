@@ -33,8 +33,8 @@
 
 1.  **Клонируйте репозиторий:**
     ```bash
-    git clone <your-repo-url>
-    cd <your-repo-name>
+    git clone https://github.com/VOVSn/bot_backend_aiogram
+    cd bot_backend_aiogram
     ```
 
 2.  **Создайте файл окружения:**
@@ -82,52 +82,3 @@
 -   **Методы**:
     -   `GetUser(user_id)`: Получает информацию о пользователе по его Telegram ID.
 
-```
-
-# ---------------- END README.md----------------
-# ---------------- START structure.mermaid----------------
-```mermaid
-graph TD
-    subgraph "Интернет"
-        User(👤 Пользователь)
-        Telegram[🌍 Telegram API]
-    end
-
-    subgraph "Ваша Инфраструктура (Docker)"
-        Nginx(🌐 Nginx)
-
-        subgraph "Service: bot_gateway"
-            FastAPI(🚀 FastAPI)
-            Aiogram(🤖 Aiogram)
-            gRPC_Client(🔌 gRPC Client)
-        end
-
-        Consul(📍 Consul)
-
-        subgraph "Service: auth_service (предполагаемый)"
-            AuthService(🔒 gRPC Auth Service)
-        end
-
-    end
-
-    User -- "Отправляет /start" --> Telegram
-    Telegram -- "POST Webhook" --> Nginx
-    Nginx -- "proxy_pass http://bot_gateway:8000" --> FastAPI
-
-    FastAPI -- "Обрабатывает запрос" --> Aiogram
-    Aiogram -- "Вызывает хендлер" --> gRPC_Client
-
-    gRPC_Client -- "1. Запрос адреса auth_service" --> Consul
-    Consul -- "2. Возвращает адрес" --> gRPC_Client
-    gRPC_Client -- "3. gRPC вызов GetUser(id)" --> AuthService
-    AuthService -- "4. Возвращает данные пользователя" --> gRPC_Client
-    
-    gRPC_Client -- "Возвращает результат хендлеру" --> Aiogram
-    Aiogram -- "Формирует ответ" --> FastAPI
-    FastAPI -- "Отправляет ответ в Telegram" --> Telegram
-    Telegram -- "Доставляет сообщение" --> User
-
-    %% Dependencies
-    Nginx --> bot_gateway
-    bot_gateway --> Consul
-    auth_service -.-> Consul
