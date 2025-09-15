@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  bot_gateway:
+    build:
+      context: ./bot_gateway
+    ports:
+      - "8000:8000"
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - WEBHOOK_HOST=${WEBHOOK_HOST}
+      - CONSUL_HOST=consul
+    networks:
+      - service_mesh
+    depends_on:
+      - consul
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt:/etc/letsencrypt
+    networks:
+      - service_mesh
+    depends_on:
+      - bot_gateway
+
+  consul:
+    image: consul:latest
+    ports:
+      - "8500:8500"
+    networks:
+      - service_mesh
+    command: "agent -server -bootstrap-expect 1 -ui -client 0.0.0.0"
+
+networks:
+  service_mesh:
+    driver: bridge

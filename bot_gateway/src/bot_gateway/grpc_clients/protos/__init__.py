@@ -1,0 +1,1 @@
+# services/bot_gateway/src/bot_gateway/grpc_clients/protos/__init__.py

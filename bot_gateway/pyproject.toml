@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "bot_gateway"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.103.1"
+uvicorn = "^0.23.2"
+aiogram = "^3.0.0"
+grpcio = "^1.58.0"
+grpcio-tools = "^1.58.0"
+python-consul = "^1.1.0"
+pydantic-settings = "^2.0.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.4.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
